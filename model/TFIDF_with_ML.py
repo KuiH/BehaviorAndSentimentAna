@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import numpy as np
 from typing import *
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -12,7 +11,7 @@ from utils import load_stopwords, tokenize_cn_text, clean_text
 
 logging.basicConfig(format='[%(asctime)s][%(name)s][%(levelname)s]%(message)s',
                     datefmt='%m/%d %H:%M:%S',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 一些超参数

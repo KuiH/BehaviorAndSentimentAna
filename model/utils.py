@@ -1,8 +1,11 @@
 import jieba
+import re
 from typing import *
 
+
 def clean_text(text: str):
-    return text.replace("，，，", "，").replace("，，", ",") # 简单处理一下
+    cleaned_text = re.sub(r'\d+', '', text) # 去除数字
+    return cleaned_text.replace("，，，", "，").replace("，，", ",")  # 简单处理一下逗号
 
 
 def load_stopwords(filepath: str):
