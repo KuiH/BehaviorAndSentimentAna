@@ -165,3 +165,5 @@ cython_debug/
 scripts.py
 stat_pic/
 dataset/
+*.pth
+model/pics/*.png
