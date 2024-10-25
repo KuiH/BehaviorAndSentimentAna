@@ -167,3 +167,5 @@ stat_pic/
 dataset/
 *.pth
 model/pics/*.png
+analyse/pics/*.png
+analyse/pics/*.html

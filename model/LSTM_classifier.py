@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 from typing import *
 
@@ -33,8 +34,6 @@ NUM_LAYERS = 1  # LSTM层数
 BATCH_SIZE = 32
 EPOCHS = 12
 LEARNING_RATE = 0.001
-
-
 # DROPOUT = 0.1 不用dropout
 
 
@@ -139,7 +138,6 @@ class SentimentLSTM(nn.Module):
         embedded = self.embedding(text)  # [batch_size, sent_len, embedding_dim]
 
         lstm_out, (hidden, cell) = self.lstm(embedded)  # lstm_out: [batch_size, sent_len, hidden_dim]
-        # logger.debug(lstm_out.shape)
 
         # 用最后一个隐含层来分类
         hidden = lstm_out[:, -1, :]  # [batch_size, hidden_dim]
@@ -220,6 +218,20 @@ def evaluate_model_on_test_set(model, test_dataloader, thresholds=np.arange(0.0,
     logger.info("Classification report for threshold 0.5:")
     logger.info(f"\n{report}")
 
+    # 生成并展示混淆矩阵
+    cm = confusion_matrix(all_labels, best_binary_predictions)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negative', 'Positive'])
+
+    plt.figure(figsize=(8, 6))
+    disp.plot(cmap=plt.cm.Blues, colorbar=False)
+    plt.title('Confusion Matrix')
+
+    cm_save_path = "pics/confusion_matrix.png"
+    plt.savefig(cm_save_path)
+    plt.close()
+
+    logger.info(f"Confusion matrix saved to {cm_save_path}")
+
 
 def main(do_train: bool = True, do_test: bool = True):
     model = SentimentLSTM(vocab_size=NUM_WORDS, embedding_dim=EMBEDDING_DIM, lstm_hidden_dim=LSTM_HIDDEN_DIM,
@@ -253,7 +265,7 @@ def main(do_train: bool = True, do_test: bool = True):
 
         # Training loop
         for epoch in range(EPOCHS):
-            model.train()  # Set the model to training mode
+            model.train()
 
             epoch_train_loss = 0
             for batch in tqdm(train_dataloader, total=len(train_dataloader), desc=f"Training Epoch {epoch + 1}: "):
@@ -287,7 +299,7 @@ def main(do_train: bool = True, do_test: bool = True):
 
                     labels = labels.float()
                     predictions = model(tokens).squeeze(1)
-                    loss = criterion(predictions, labels)  # Calculate validation loss
+                    loss = criterion(predictions, labels)
 
                     epoch_valid_loss += loss.item()
 
@@ -311,9 +323,8 @@ def main(do_train: bool = True, do_test: bool = True):
                 f'Epoch {epoch + 1}/{EPOCHS}, Training Loss: {avg_train_loss:.4f}, Validation Loss: {avg_valid_loss:.4f}')
 
             # Plot validation loss after each epoch
-            plt.plot(range(1, len(train_losses) + 1), train_losses, label='Training Loss', color='blue', linestyle='-')
-            plt.plot(range(1, len(valid_losses) + 1), valid_losses, label='Validation Loss', color='orange',
-                     linestyle='--')
+            plt.plot(range(1, len(train_losses) + 1), train_losses, label='Training Loss', color='blue')
+            plt.plot(range(1, len(valid_losses) + 1), valid_losses, label='Validation Loss', color='orange')
 
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
