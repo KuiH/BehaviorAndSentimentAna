@@ -12,7 +12,6 @@ CENTERS = 10  # 类别数
 N_FEATURES = 40  # 维度
 
 user_f, Y = make_blobs(n_samples=1200, n_features=N_FEATURES, cluster_std=STD, centers=CENTERS, random_state=SEED)
-# 使用K-Means进行聚类
 kmeans = KMeans(n_clusters=CENTERS, random_state=SEED)
 Y_kmeans = kmeans.fit_predict(user_f)
 
@@ -22,7 +21,7 @@ X_tsne = tsne.fit_transform(user_f)
 plt.figure(figsize=(10, 8))
 scatter = plt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=Y_kmeans, cmap='viridis', alpha=0.8, edgecolors='w', s=50)
 
-plt.title('K-Means Clustering with t-SNE Projection')
-plt.xlabel('t-SNE Component 1')
-plt.ylabel('t-SNE Component 2')
+plt.title('K-Means Clustering with t-SNE Projection', fontsize=16)
+plt.xlabel('t-SNE Component 1',fontsize=14)
+plt.ylabel('t-SNE Component 2',fontsize=14)
 plt.savefig(r'pics/user_cluster.png')

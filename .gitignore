@@ -164,7 +164,9 @@ cython_debug/
 # Myself
 scripts.py
 stat_pic/
-dataset/
+dataset/*.csv
+!dataset/comments_small_*
+
 *.pth
 model/pics/*.png
 analyse/pics/*.png

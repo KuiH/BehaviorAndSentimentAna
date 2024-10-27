@@ -143,7 +143,6 @@ def RFM(df: pd.DataFrame):
     # R:Recency最近一次交易日期；F:Frequency频率，交易次数
     buy_userid_group = df[df['type'] == 'buy'].groupby(by='userid')
 
-    # 先创建一个空的DataFrame
     RF = pd.DataFrame(index=buy_userid_group.groups.keys(), columns=['R', 'F'])
 
     # 因为这边索引的顺序就是按照groupby之后的顺序，所以直接赋值即可
@@ -164,14 +163,12 @@ def RFM(df: pd.DataFrame):
         user_classfication, axis=1)
     classification_counts = RF['user_classification'].value_counts()
 
-    # 绘制柱状图
     plt.figure(figsize=(5, 6))
     bars = plt.bar(classification_counts.index, classification_counts.values, color='skyblue', width=0.4)
     for bar in bars:
-        yval = bar.get_height()  # 获取柱子的高度
+        yval = bar.get_height()
         plt.text(bar.get_x() + bar.get_width() / 2, yval, int(yval), ha='center', va='bottom', fontsize=12)
 
-    # 添加标题和标签
     plt.title('用户价值分类统计', fontsize=16)
     plt.xlabel('用户价值类别', fontsize=14)
     plt.ylabel('用户数量', fontsize=14)
